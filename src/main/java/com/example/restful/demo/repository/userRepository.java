@@ -4,8 +4,14 @@ import com.example.restful.demo.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
+
 public interface userRepository extends MongoRepository<User, String> {
-    @Query("{username: ?0}")
-    User findItemByUsername(String username);
+    @Query(value = "{id: '?0'}")
+    User findByID(String id);
+
+
+    @Query(value = "{ 'id' : ?0}", fields = "{ 'id': 0}")
+    User findByIdExclude(String id);
 
 }
