@@ -1,14 +1,10 @@
 package com.example.restful.demo.model;
 
-public class ErrorMessage {
-    private String message;
+public class StatusMessage {
+    String message;
 
-    public ErrorMessage(String message) {
+    public StatusMessage(String message) {
         this.message = message;
-    }
-
-    public ErrorMessage() {
-
     }
 
     public String getMessage() {

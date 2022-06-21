@@ -1,6 +1,6 @@
 package com.example.restful.demo.service;
 
-import com.example.restful.demo.model.ErrorMessage;
+import com.example.restful.demo.model.StatusMessage;
 import com.example.restful.demo.model.Messages;
 import com.example.restful.demo.model.User;
 import com.example.restful.demo.repository.userRepository;
@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.*;
 import java.util.List;
@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Validated
 @EnableMongoRepositories
 public class UserService {
 
@@ -33,7 +34,7 @@ public class UserService {
     public ResponseEntity<?> getSpecific(String id) {
         User singleUser =  repository.findByID(id);
         if(Objects.isNull(singleUser)) {
-            ErrorMessage message = new ErrorMessage(Messages.USER_NOT_FOUND);
+            StatusMessage message = new StatusMessage(Messages.USER_NOT_FOUND);
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
         //1) Make enum to store common exception messages
@@ -48,17 +49,9 @@ public class UserService {
         userValidate.setUsername(request.getUsername());
         userValidate.setEmail(request.getEmail());
         userValidate.setPassword(request.getPassword());
-
-        String validationResult = inputValidation(request);
-        String Status = Messages.VALID_USER;
-
-        if(Status.equals(validationResult)) {
-            repository.insert(request);
-            ErrorMessage message = new ErrorMessage(Messages.USER_INSERTED);
-            return new ResponseEntity<>(message, HttpStatus.OK);
-        }
-
-        return new ResponseEntity <String>(validationResult, HttpStatus.BAD_REQUEST);
+        repository.insert(request);
+        StatusMessage message = new StatusMessage(Messages.USER_INSERTED);
+        return new ResponseEntity<>(message, HttpStatus.OK);
 
 
     }
@@ -78,12 +71,13 @@ public class UserService {
     public ResponseEntity<?> deleteUser(String id) {
           User userDetail = repository.findByID(id);
           if(Objects.isNull(userDetail)) {
-              ErrorMessage message = new ErrorMessage(Messages.USER_NOT_FOUND);
+              StatusMessage message = new StatusMessage(Messages.USER_NOT_FOUND);
               return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
           }
           repository.deleteById(id);
           String format = String.format("%s id-тай хэрэглэгчийг амжилттай устгасан", id);
-          return new ResponseEntity<>(format, HttpStatus.OK);
+          StatusMessage message = new StatusMessage(format);
+          return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 
@@ -97,7 +91,7 @@ public class UserService {
 
             return new ResponseEntity<>(repository.save(_user), HttpStatus.OK);
         }
-        ErrorMessage message = new ErrorMessage(Messages.USER_NOT_FOUND);
+        StatusMessage message = new StatusMessage(Messages.USER_NOT_FOUND);
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
