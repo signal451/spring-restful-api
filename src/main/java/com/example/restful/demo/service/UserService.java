@@ -1,6 +1,7 @@
 package com.example.restful.demo.service;
 
 import com.example.restful.demo.model.ErrorMessage;
+import com.example.restful.demo.model.Messages;
 import com.example.restful.demo.model.User;
 import com.example.restful.demo.repository.userRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class UserService {
 
     @Autowired
     userRepository repository;
-    final String VALID = "VALID";
+    Messages USER_MESSAGE;
 
     public List<User> getUsers() {
         List <User> list = repository.findAll();
@@ -32,8 +33,8 @@ public class UserService {
     public ResponseEntity<?> getSpecific(String id) {
         User singleUser =  repository.findByID(id);
         if(Objects.isNull(singleUser)) {
-            ErrorMessage message = new ErrorMessage();
-            return new ResponseEntity<>("Сервер дээр хэрэглэгч олдсонгүй", HttpStatus.NOT_FOUND);
+            ErrorMessage message = new ErrorMessage(Messages.USER_NOT_FOUND);
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
         //1) Make enum to store common exception messages
         return new ResponseEntity<>( singleUser, HttpStatus.OK);
@@ -41,7 +42,7 @@ public class UserService {
 
 
 
-    public ResponseEntity <String> insert(@Valid @RequestBody User request) {
+    public ResponseEntity <?> insert(@Valid @RequestBody User request) {
 
         User userValidate = new User();
         userValidate.setUsername(request.getUsername());
@@ -49,10 +50,12 @@ public class UserService {
         userValidate.setPassword(request.getPassword());
 
         String validationResult = inputValidation(request);
+        String Status = Messages.VALID_USER;
 
-        if(VALID.equals(validationResult)) {
+        if(Status.equals(validationResult)) {
             repository.insert(request);
-            return new ResponseEntity<>("Хэрэглэгчийг амжилттай бүртгэсэн", HttpStatus.OK);
+            ErrorMessage message = new ErrorMessage(Messages.USER_INSERTED);
+            return new ResponseEntity<>(message, HttpStatus.OK);
         }
 
         return new ResponseEntity <String>(validationResult, HttpStatus.BAD_REQUEST);
@@ -69,23 +72,23 @@ public class UserService {
                 return violation.getMessage();
             }
         }
-        return VALID;
+        return Messages.VALID_USER;
     }
-    // delete ..
-    public ResponseEntity<String> deleteUser(String id) {
+
+    public ResponseEntity<?> deleteUser(String id) {
           User userDetail = repository.findByID(id);
           if(Objects.isNull(userDetail)) {
-              return new ResponseEntity<>("Сервер дээр хэрэглэгч олдсонгүй", HttpStatus.NOT_FOUND);
+              ErrorMessage message = new ErrorMessage(Messages.USER_NOT_FOUND);
+              return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
           }
           repository.deleteById(id);
           String format = String.format("%s id-тай хэрэглэгчийг амжилттай устгасан", id);
           return new ResponseEntity<>(format, HttpStatus.OK);
     }
 
-    // update ..
-    public ResponseEntity<?> updateSingleUser( @PathVariable("id") String id,  @Valid User user) {
-        System.out.println("user id" + id);
-        Optional<User> userData = repository.findById(id);
+
+    public ResponseEntity<?> updateSingleUser( @Valid User user) {
+        Optional<User> userData = repository.findById(user.getId());
         if(userData.isPresent()) {
             User _user = userData.get();
             _user.setUsername(user.getUsername());
@@ -94,7 +97,8 @@ public class UserService {
 
             return new ResponseEntity<>(repository.save(_user), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Сервер дээр хүсэлтийн хэрэглэгч олдсонгүй", HttpStatus.NOT_FOUND);
+        ErrorMessage message = new ErrorMessage(Messages.USER_NOT_FOUND);
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
 
