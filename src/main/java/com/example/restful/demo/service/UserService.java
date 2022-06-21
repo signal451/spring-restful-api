@@ -1,6 +1,6 @@
 package com.example.restful.demo.service;
 
-import com.example.restful.demo.markers.Insert;
+import com.example.restful.demo.model.ErrorMessage;
 import com.example.restful.demo.model.User;
 import com.example.restful.demo.repository.userRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,15 +8,15 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
-@Validated
 @EnableMongoRepositories
 public class UserService {
 
@@ -29,13 +29,18 @@ public class UserService {
         return list;
     }
 
-    public User getSpecific(String id) {
+    public ResponseEntity<?> getSpecific(String id) {
         User singleUser =  repository.findByID(id);
-        return singleUser;
+        if(Objects.isNull(singleUser)) {
+            ErrorMessage message = new ErrorMessage();
+            return new ResponseEntity<>("Сервер дээр хэрэглэгч олдсонгүй", HttpStatus.NOT_FOUND);
+        }
+        //1) Make enum to store common exception messages
+        return new ResponseEntity<>( singleUser, HttpStatus.OK);
     }
 
 
-    @Validated(Insert.class)
+
     public ResponseEntity <String> insert(@Valid @RequestBody User request) {
 
         User userValidate = new User();
@@ -78,13 +83,19 @@ public class UserService {
     }
 
     // update ..
-    public ResponseEntity<?> updateSingleUser(@Valid User user) {
+    public ResponseEntity<?> updateSingleUser( @PathVariable("id") String id,  @Valid User user) {
+        System.out.println("user id" + id);
+        Optional<User> userData = repository.findById(id);
+        if(userData.isPresent()) {
+            User _user = userData.get();
+            _user.setUsername(user.getUsername());
+            _user.setEmail(user.getEmail());
+            _user.setPassword(user.getPassword());
 
-        User userDetail = repository.findByID(user.getId());
-        if(!Objects.isNull(userDetail)) {
-            //somehow now I need to remove ID attribute from object.
-            return new ResponseEntity<>("Хэрэглэгчийн мэдээлэл", HttpStatus.OK);
+            return new ResponseEntity<>(repository.save(_user), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Сервер дээр хэрэглэгч олдсонгүй", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Сервер дээр хүсэлтийн хэрэглэгч олдсонгүй", HttpStatus.NOT_FOUND);
     }
+
+
 }

@@ -29,8 +29,7 @@ public class ErrorHandlingController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ValidationErrorResponse onMethodArgumentNotValidException(
-            MethodArgumentNotValidException e) {
+    ValidationErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         ValidationErrorResponse error = new ValidationErrorResponse();
         for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
             error.getViolations().add(
@@ -38,5 +37,4 @@ public class ErrorHandlingController {
         }
         return error;
     }
-
 }

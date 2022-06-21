@@ -15,14 +15,14 @@ import javax.validation.constraints.Size;
 
 public class User {
     @Id
-    public String id;
-    @NotBlank(groups = Insert.class, message = "Хэрэглэгчийн нэр хоосон байна")
+    private String id;
+    @NotBlank(message = "Хэрэглэгчийн нэр хоосон байна")
     @Size(min = 4, max = 20, message = "Хэрэглэгчийн нэр 4 эсвэл 20-ийн хооронд байх")
     private String username;
-    @NotBlank(groups = Insert.class, message = "И-мейл талбар хоосон байна")
+    @NotBlank(message = "И-мейл талбар хоосон байна")
     @Email(message = "И-мейл буруу форматтай байна", regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
     private String email;
-    @NotBlank(groups = Insert.class, message = "Нууц үг хоосон байна")
+    @NotBlank(message = "Нууц үг хоосон байна")
     @Size(min = 6 , message = "Нууц үг 6 болон түүнээс дээш тэмдэгтээс бүрдсэн байх")
     private String password;
 

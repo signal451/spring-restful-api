@@ -26,7 +26,7 @@ public class requestController {
     }
 
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public User getSingleUser(@PathVariable String id) {
+    public ResponseEntity<?> getSingleUser(@PathVariable String id) {
         return service.getSpecific(id);
     }
 
@@ -38,6 +38,6 @@ public class requestController {
     @RequestMapping(value = "api/users/{id}", method = RequestMethod.DELETE, produces = MediaType.TEXT_PLAIN_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity <String> removeUserFromDB(@PathVariable String id) { return  service.deleteUser(id); }
 
-    @RequestMapping(value = "api/users", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity <?> updateUser(@RequestBody User user) { return service.updateSingleUser(user); }
+    @RequestMapping(value = "api/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
+    public ResponseEntity <?> updateUser(@PathVariable String id, @RequestBody User user) { return service.updateSingleUser(id, user); }
 }
