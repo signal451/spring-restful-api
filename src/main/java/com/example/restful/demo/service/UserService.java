@@ -1,5 +1,6 @@
 package com.example.restful.demo.service;
 
+import com.example.restful.demo.markers.Insert;
 import com.example.restful.demo.model.User;
 import com.example.restful.demo.repository.userRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,15 +8,15 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
-import java.util.*;
+import javax.validation.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
+@Validated
 @EnableMongoRepositories
 public class UserService {
 
@@ -34,7 +35,8 @@ public class UserService {
     }
 
 
-    public ResponseEntity insert(@Valid @RequestBody User request) {
+    @Validated(Insert.class)
+    public ResponseEntity <String> insert(@Valid @RequestBody User request) {
 
         User userValidate = new User();
         userValidate.setUsername(request.getUsername());
@@ -45,7 +47,7 @@ public class UserService {
 
         if(VALID.equals(validationResult)) {
             repository.insert(request);
-            return new ResponseEntity <String>("Хэрэглэгчийг амжилттай бүртгэсэн", HttpStatus.OK);
+            return new ResponseEntity<>("Хэрэглэгчийг амжилттай бүртгэсэн", HttpStatus.OK);
         }
 
         return new ResponseEntity <String>(validationResult, HttpStatus.BAD_REQUEST);
@@ -56,7 +58,7 @@ public class UserService {
     private String inputValidation(User validate) {
        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<User>> violations = validator.validate(validate);
+       Set<ConstraintViolation<User>> violations = validator.validate(validate);
         if(violations.size() > 0) {
             for(ConstraintViolation<User> violation: violations) {
                 return violation.getMessage();
@@ -64,7 +66,6 @@ public class UserService {
         }
         return VALID;
     }
-
     // delete ..
     public ResponseEntity<String> deleteUser(String id) {
           User userDetail = repository.findByID(id);
@@ -77,33 +78,13 @@ public class UserService {
     }
 
     // update ..
-    public ResponseEntity<User> updateSingleUser(User user) {
+    public ResponseEntity<?> updateSingleUser(@Valid User user) {
 
         User userDetail = repository.findByID(user.getId());
-
-        // loop through object and set that data ....
         if(!Objects.isNull(userDetail)) {
-            //garbage code ....
-            //regex bicheed keyword ni taarch baival tuhain keyword deerh object deer utga olgono
-            String username = user.getUsername() == null || user.getUsername().length() == 0 ?  userDetail.getUsername() : user.getUsername();
-            String email    = user.getEmail() == null || user.getEmail().length() == 0 ? userDetail.getEmail() : user.getEmail();
-            String password = user.getPassword() == null || user.getPassword().length() == 0 ? userDetail.getPassword() : user.getPassword();
-
-
-            userDetail.setUsername(username);
-            userDetail.setEmail(email);
-            userDetail.setPassword(password);
-
-            repository.save(userDetail);
-
-            User send = new User();
-            send.setUsername(username);
-            send.setEmail(email);
-            send.setPassword(password);
-
-            return new ResponseEntity<>(send, HttpStatus.OK);
+            //somehow now I need to remove ID attribute from object.
+            return new ResponseEntity<>("Хэрэглэгчийн мэдээлэл", HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(userDetail, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Сервер дээр хэрэглэгч олдсонгүй", HttpStatus.NOT_FOUND);
     }
 }

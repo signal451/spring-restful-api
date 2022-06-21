@@ -39,5 +39,5 @@ public class requestController {
     public ResponseEntity <String> removeUserFromDB(@PathVariable String id) { return  service.deleteUser(id); }
 
     @RequestMapping(value = "api/users", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity <User> updateUser(@RequestBody User user) { return service.updateSingleUser(user); }
+    public ResponseEntity <?> updateUser(@RequestBody User user) { return service.updateSingleUser(user); }
 }
