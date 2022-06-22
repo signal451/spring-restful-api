@@ -26,18 +26,18 @@ public class requestController {
     }
 
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public User getSingleUser(@PathVariable String id) {
+    public ResponseEntity<?> getSingleUser(@PathVariable String id) {
         return service.getSpecific(id);
     }
 
-    @RequestMapping(value = "api/users", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity userSignIn(@RequestBody User userSignIn) {
+    @RequestMapping(value = "api/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
+    public ResponseEntity<?> userSignIn(@RequestBody User userSignIn) {
         return service.insert(userSignIn);
     }
 
-    @RequestMapping(value = "api/users/{id}", method = RequestMethod.DELETE, produces = MediaType.TEXT_PLAIN_VALUE, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity <String> removeUserFromDB(@PathVariable String id) { return  service.deleteUser(id); }
+    @RequestMapping(value = "api/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
+    public ResponseEntity <?> removeUserFromDB(@PathVariable String id) { return  service.deleteUser(id); }
 
     @RequestMapping(value = "api/users", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity <User> updateUser(@RequestBody User user) { return service.updateSingleUser(user); }
+    public ResponseEntity <?> updateUser( @RequestBody User user) { return service.updateSingleUser(user); }
 }
