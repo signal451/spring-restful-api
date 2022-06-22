@@ -3,7 +3,7 @@ package com.example.restful.demo.service;
 import com.example.restful.demo.model.StatusMessage;
 import com.example.restful.demo.model.Messages;
 import com.example.restful.demo.model.User;
-import com.example.restful.demo.repository.userRepository;
+import com.example.restful.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,8 +21,10 @@ import java.util.Set;
 @EnableMongoRepositories
 public class UserService {
 
+
     @Autowired
-    userRepository repository;
+    UserRepository repository;
+
     Messages USER_MESSAGE;
 
     public ResponseEntity<?> getUsers() {

@@ -15,6 +15,7 @@ public class requestController {
 
 
     private final UserService service;
+
     @Autowired
     public requestController(UserService userService) {
         this.service = userService;
@@ -30,14 +31,14 @@ public class requestController {
         return service.getSpecific(id);
     }
 
-    @RequestMapping(value = "api/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
+    @RequestMapping(value = "/api/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> userSignIn(@RequestBody User userSignIn) {
         return service.insert(userSignIn);
     }
 
-    @RequestMapping(value = "api/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
+    @RequestMapping(value = "/api/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity <?> removeUserFromDB(@PathVariable String id) { return  service.deleteUser(id); }
 
-    @RequestMapping(value = "api/users", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
+    @RequestMapping(value = "/api/users", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity <?> updateUser( @RequestBody User user) { return service.updateSingleUser(user); }
 }
