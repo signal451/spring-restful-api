@@ -7,8 +7,5 @@ import org.springframework.data.mongodb.repository.Query;
 import java.util.List;
 
 public interface userRepository extends MongoRepository<User, String> {
-    @Query(value = "{id: '?0'}")
-    User findByID(String id);
-
 
 }

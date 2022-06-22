@@ -26,34 +26,29 @@ public class UserService {
     userRepository repository;
     Messages USER_MESSAGE;
 
-    public List<User> getUsers() {
+    public ResponseEntity<?> getUsers() {
         List <User> list = repository.findAll();
-        return list;
+        if(list.isEmpty()) {
+            StatusMessage message = new StatusMessage(Messages.LIST_NOT_FOUND);
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     public ResponseEntity<?> getSpecific(String id) {
-        User singleUser =  repository.findByID(id);
-        if(Objects.isNull(singleUser)) {
+        Optional<User> userDetails = repository.findById(id);
+        if(userDetails.isEmpty()) {
             StatusMessage message = new StatusMessage(Messages.USER_NOT_FOUND);
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
-        //1) Make enum to store common exception messages
-        return new ResponseEntity<>( singleUser, HttpStatus.OK);
+        return new ResponseEntity<>(userDetails, HttpStatus.OK);
     }
 
-
-
     public ResponseEntity <?> insert(@Valid @RequestBody User request) {
-
-        User userValidate = new User();
-        userValidate.setUsername(request.getUsername());
-        userValidate.setEmail(request.getEmail());
-        userValidate.setPassword(request.getPassword());
+        // Encrypt user password I guess ;-;
         repository.insert(request);
         StatusMessage message = new StatusMessage(Messages.USER_INSERTED);
         return new ResponseEntity<>(message, HttpStatus.OK);
-
-
     }
 
     private String inputValidation(User validate) {
@@ -69,8 +64,8 @@ public class UserService {
     }
 
     public ResponseEntity<?> deleteUser(String id) {
-          User userDetail = repository.findByID(id);
-          if(Objects.isNull(userDetail)) {
+           Optional<User> userDetails = repository.findById(id);
+          if(userDetails.isEmpty()) {
               StatusMessage message = new StatusMessage(Messages.USER_NOT_FOUND);
               return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
           }

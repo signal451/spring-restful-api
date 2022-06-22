@@ -21,7 +21,7 @@ public class requestController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes =  MediaType.ALL_VALUE)
-    public List <User> getAllUser() {
+    public  ResponseEntity<?> getAllUser() {
         return service.getUsers();
     }
 
