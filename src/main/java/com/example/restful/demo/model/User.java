@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 
 public class User {
 
+    @NotBlank(message = "Хэрэглэгчийн ID хоосон байна")
     private String id;
     @NotBlank(message = "Хэрэглэгчийн нэр хоосон байна")
     @Size(min = 4, max = 20, message = "Хэрэглэгчийн нэр 4 эсвэл 20-ийн хооронд байх")
@@ -35,7 +36,6 @@ public class User {
     }
 
     public User(){}
-
 
     public String getId() {
         return id;

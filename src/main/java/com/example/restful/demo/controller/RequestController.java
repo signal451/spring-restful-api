@@ -7,17 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-
 @RestController
-public class requestController {
-
+public class RequestController {
 
     private final UserService service;
 
     @Autowired
-    public requestController(UserService userService) {
+    public RequestController(UserService userService) {
         this.service = userService;
     }
 
