@@ -77,8 +77,8 @@ public class UserService {
     }
 
 
-    public ResponseEntity<?> updateSingleUser( @Valid User user) {
-        Optional<User> userData = repository.findById(user.getId());
+    public ResponseEntity<?> updateSingleUser(String UserId, @Valid User user) {
+        Optional<User> userData = repository.findById(UserId);
         if(userData.isPresent()) {
             User _user = userData.get();
             _user.setUsername(user.getUsername());

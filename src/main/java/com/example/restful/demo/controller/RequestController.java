@@ -1,6 +1,7 @@
 package com.example.restful.demo.controller;
 
 import com.example.restful.demo.model.User;
+import com.example.restful.demo.service.UserSequenceGenerate;
 import com.example.restful.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 public class RequestController {
 
     private final UserService service;
+
+    @Autowired
+    private UserSequenceGenerate userSequenceGenerate;
 
     @Autowired
     public RequestController(UserService userService) {
@@ -28,13 +32,14 @@ public class RequestController {
     }
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity<?> userSignIn(@RequestBody User userSignIn) {
-        return service.insert(userSignIn);
+    public ResponseEntity<?> userSignIn(@RequestBody User userData) {
+        userData.setId(userSequenceGenerate.generateUserSequence(User.SEQUENCE_NAME));
+        return service.insert(userData);
     }
 
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity <?> removeUserFromDB(@PathVariable String id) { return  service.deleteUser(id); }
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
-    public ResponseEntity <?> updateUser( @RequestBody User user) { return service.updateSingleUser(user); }
+    @RequestMapping(value = "/api/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
+    public ResponseEntity <?> updateUser(@PathVariable String id, @RequestBody User user) { return service.updateSingleUser(id, user); }
 }
