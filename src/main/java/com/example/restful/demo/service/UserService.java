@@ -25,6 +25,9 @@ public class UserService {
     @Autowired
     UserRepository repository;
 
+    @Autowired
+    private UserSequenceGenerate userSequenceGenerate;
+
     Messages USER_MESSAGE;
 
     public ResponseEntity<?> getUsers() {
@@ -47,6 +50,7 @@ public class UserService {
 
     public ResponseEntity <?> insert(@Valid @RequestBody User request) {
         // Encrypt user password I guess ;-;
+        request.setId(userSequenceGenerate.generateUserSequence(User.SEQUENCE_NAME));
         repository.insert(request);
         StatusMessage message = new StatusMessage(Messages.USER_INSERTED);
         return new ResponseEntity<>(message, HttpStatus.OK);

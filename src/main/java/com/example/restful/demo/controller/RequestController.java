@@ -13,8 +13,6 @@ public class RequestController {
 
     private final UserService service;
 
-    @Autowired
-    private UserSequenceGenerate userSequenceGenerate;
 
     @Autowired
     public RequestController(UserService userService) {
@@ -33,7 +31,7 @@ public class RequestController {
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> userSignIn(@RequestBody User userData) {
-        userData.setId(userSequenceGenerate.generateUserSequence(User.SEQUENCE_NAME));
+        //TODO: --> when incoming request fails we don't have to increase sequence number
         return service.insert(userData);
     }
 
