@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -89,6 +90,7 @@ public class ServiceTest {
             assertEquals("Хэрэглэгч амжилттай бүртгэгдсэн", data.getBody().getMessage());
         }
         else {
+            // useless shit ( This would be become internal server error)
             assertEquals("NOT_FOUND", arr[1]);
         }
     }
@@ -105,9 +107,9 @@ public class ServiceTest {
     @DisplayName("Get all users data")
     @Test
     void getUsers() {
-       HttpStatus status = service.getUsers().getStatusCode();
-       String[] arr = getResponseStatusCode(status);
-       if(arr[0].equals("200")) {
+       ResponseEntity<List<User>> data = (ResponseEntity<List<User>>) service.getUsers();
+       String[] arr = getResponseStatusCode(data.getStatusCode());
+       if(arr[0].equals("200") && data.getBody().size() >= 1) {
            assertEquals("OK", arr[1]);
        }
        else {
@@ -148,7 +150,6 @@ public class ServiceTest {
             assertEquals("NOT_FOUND", arr[1]);
         }
     }
-
 
     public String[] getResponseStatusCode(HttpStatus status) {
         String strStatus =  status.toString();
