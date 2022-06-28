@@ -11,14 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-
+import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.mockito.Mockito.*;
+
 
 @SpringBootTest
 public class ServiceTest {
@@ -45,9 +40,6 @@ public class ServiceTest {
         RandomUser.put("username", list.get(0));
         RandomUser.put("email", list.get(0) + "@gmail.com");
         RandomUser.put("password", list.get(1));
-
-        System.out.println(RandomUser);
-
     }
 
     public static int getRandomNumber(int min, int max) {
@@ -55,18 +47,15 @@ public class ServiceTest {
     }
 
     private static String generateUserDetails(int StringLength) {
-        String [] user = {};
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
-        int targetStringLength = StringLength;
         Random random = new Random();
-        StringBuilder buffer = new StringBuilder(targetStringLength);
-        for (int i = 0; i < targetStringLength; i++) {
+        StringBuilder buffer = new StringBuilder(StringLength);
+        for (int i = 0; i < StringLength; i++) {
             int randomLimitedInt = leftLimit + (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
             buffer.append((char) randomLimitedInt);
         }
-        String generatedString = buffer.toString();
-        return generatedString;
+        return buffer.toString();
     }
 
 
@@ -87,7 +76,7 @@ public class ServiceTest {
         String[] arr = getResponseStatusCode(data.getStatusCode());
         if(arr[0].equals("200")) {
             assertEquals("OK", arr[1]);
-            assertEquals("Хэрэглэгч амжилттай бүртгэгдсэн", data.getBody().getMessage());
+            assertEquals("Хэрэглэгч амжилттай бүртгэгдсэн", Objects.requireNonNull(data.getBody()).getMessage());
         }
         else {
             // useless shit ( This would be become internal server error)
@@ -109,7 +98,7 @@ public class ServiceTest {
     void getUsers() {
        ResponseEntity<List<User>> data = (ResponseEntity<List<User>>) service.getUsers();
        String[] arr = getResponseStatusCode(data.getStatusCode());
-       if(arr[0].equals("200") && data.getBody().size() >= 1) {
+       if(arr[0].equals("200") && Objects.requireNonNull(data.getBody()).size() >= 1) {
            assertEquals("OK", arr[1]);
        }
        else {
@@ -130,7 +119,7 @@ public class ServiceTest {
         if(arr[0].equals("200")) {
             GenericUser.setId(user.getId());
             assertEquals("OK", arr[1]);
-            assertEquals(GenericUser.getId(), updated.getBody().getId());
+            assertEquals(GenericUser.getId(), Objects.requireNonNull(updated.getBody()).getId());
         }
         else {
             assertEquals("NOT_FOUND", arr[1]);
@@ -144,7 +133,7 @@ public class ServiceTest {
         String[] arr = getResponseStatusCode(message.getStatusCode());
         if(arr[0].equals("200")) {
             assertEquals("OK", arr[1]);
-            assertEquals(RandomUser.get("id") + " id-тай хэрэглэгчийг амжилттай устгасан", message.getBody().getMessage());
+            assertEquals(RandomUser.get("id") + " id-тай хэрэглэгчийг амжилттай устгасан", Objects.requireNonNull(message.getBody()).getMessage());
         }
         else {
             assertEquals("NOT_FOUND", arr[1]);
@@ -153,7 +142,6 @@ public class ServiceTest {
 
     public String[] getResponseStatusCode(HttpStatus status) {
         String strStatus =  status.toString();
-        String[] arr = strStatus.split(" ", 2);
-        return arr;
+        return strStatus.split(" ", 2);
     }
 }
