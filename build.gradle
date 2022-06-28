@@ -25,6 +25,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-validation')
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+//	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:1.35'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
