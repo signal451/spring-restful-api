@@ -7,6 +7,4 @@ public class Messages {
 
     public static String LIST_NOT_FOUND = "Сервер дээр жагсаалт үүсгээгүй эсвэл хоосон байна";
 
-
-
 }

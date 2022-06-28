@@ -1,4 +1,4 @@
-package com.example.restful.demo.controller;
+package com.example.restful.demo.Error;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
