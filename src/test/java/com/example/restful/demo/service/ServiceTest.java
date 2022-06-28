@@ -9,13 +9,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -32,8 +33,8 @@ public class ServiceTest {
     @BeforeAll
     public static void preRun() {
         RandomUserGenerate();
-    }
 
+    }
 
     private static void RandomUserGenerate() {
         ArrayList<String> list = new ArrayList<>();
@@ -68,21 +69,24 @@ public class ServiceTest {
     }
 
 
+    private User genericUser() {
+        User generic = new User();
+        generic.setUsername(RandomUser.get("username"));
+        generic.setPassword(RandomUser.get("password"));
+        generic.setEmail(RandomUser.get("email"));
+        return generic;
+    }
+
 
     @Test
     @DisplayName("Testing service.insert")
     public void insertTestUserToDB() {
-        User user = new User();
-        user.setUsername(RandomUser.get("username"));
-        user.setPassword(RandomUser.get("password"));
-        user.setEmail(RandomUser.get("email"));
-        ResponseEntity<List<User>> data = (ResponseEntity<List<User>>) service.insert(user);
-        StatusMessage message = (StatusMessage) data.getBody();
-        HttpStatus status = data.getStatusCode();
-        String[] arr = getResponseStatusCode(status);
+        User user = genericUser();
+        ResponseEntity<StatusMessage> data = (ResponseEntity<StatusMessage>) service.insert(user);
+        String[] arr = getResponseStatusCode(data.getStatusCode());
         if(arr[0].equals("200")) {
             assertEquals("OK", arr[1]);
-            assertEquals("Хэрэглэгч амжилттай бүртгэгдсэн", message.getMessage());
+            assertEquals("Хэрэглэгч амжилттай бүртгэгдсэн", data.getBody().getMessage());
         }
         else {
             assertEquals("NOT_FOUND", arr[1]);
@@ -111,15 +115,39 @@ public class ServiceTest {
        }
     }
 
-    // DELETE TEST
-    @Test
-    @DisplayName("Test service.delete")
-    public void deleteUser() {
 
+
+    @Test
+    @DisplayName("Test service.update")
+    void updateUser() {
+        User user = repository.findItemQuery(RandomUser.get("username"), RandomUser.get("password"));
+        RandomUser.put("id", user.getId());
+        User GenericUser = genericUser();
+        ResponseEntity<User> updated = (ResponseEntity<User>) service.updateSingleUser(user.getId(), GenericUser);
+        String[] arr = getResponseStatusCode(updated.getStatusCode());
+        if(arr[0].equals("200")) {
+            GenericUser.setId(user.getId());
+            assertEquals("OK", arr[1]);
+            assertEquals(GenericUser.getId(), updated.getBody().getId());
+        }
+        else {
+            assertEquals("NOT_FOUND", arr[1]);
+        }
     }
 
-
-    // UPDATE TEST
+    @Test
+    @DisplayName("Test service.delete")
+    void deleteUser() {
+        ResponseEntity<StatusMessage> message = (ResponseEntity<StatusMessage>) service.deleteUser(RandomUser.get("id"));
+        String[] arr = getResponseStatusCode(message.getStatusCode());
+        if(arr[0].equals("200")) {
+            assertEquals("OK", arr[1]);
+            assertEquals(RandomUser.get("id") + " id-тай хэрэглэгчийг амжилттай устгасан", message.getBody().getMessage());
+        }
+        else {
+            assertEquals("NOT_FOUND", arr[1]);
+        }
+    }
 
 
     public String[] getResponseStatusCode(HttpStatus status) {
