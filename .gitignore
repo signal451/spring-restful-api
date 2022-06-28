@@ -6,8 +6,7 @@ build/
 !**/src/test/**/build/
 src/main/resources/application.properties
 ### react-web-application
-src/main/react-application/
-
+/src/main/react-application/
 
 ### STS ###
 .apt_generated
