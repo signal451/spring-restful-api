@@ -107,7 +107,6 @@ public class ServiceTest {
     }
 
 
-
     @Test
     @DisplayName("Test service.update")
     void updateUser() {
