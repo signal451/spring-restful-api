@@ -19,28 +19,28 @@ public class RequestController {
         this.service = userService;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/api/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes =  MediaType.ALL_VALUE)
     public  ResponseEntity<?> getAllUser() {
         return service.getUsers();
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> getSingleUser(@PathVariable String id) {
         return service.getSpecific(id);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/api/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity<?> userSignIn(@RequestBody User userData) {
         //TODO: --> when incoming request fails we don't have to increase sequence number
         return service.insert(userData);
     }
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity <?> removeUserFromDB(@PathVariable String id) { return  service.deleteUser(id); }
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/api/users/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.ALL_VALUE)
     public ResponseEntity <?> updateUser(@PathVariable String id, @RequestBody User user) { return service.updateSingleUser(id, user); }
 }
